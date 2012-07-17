@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/prettify.css">
+    <style type="text/css">
+
+    body {
+      padding-top: 60px;
+    }
+
+    p {
+      word-spacing: 1.5px;
+      font-size: 16px;
+      line-height: 1.625em;
+      padding:0 0 0.8125em 0;
+    }
+
+    .wide li {
+      margin: 0 0 0.8125em 0;
+      font-size: 16px;
+      line-height: 1.625em;
+    }
+
+    section {
+      padding-top: 30px;
+    }
+
+    #pad {
+      width: 90%;
+    }
+
+    .prettyprint {
+      background-color: #fefbf3;
+      padding: 9px;
+      border: 1px solid rgba(0,0,0,.2);
+      -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+         -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+              box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+
+    #trains {
+      list-style-type: none;
+      margin: 0;
+      width: 100%;
+    }
+
+    #trains li {
+      margin: 0 3px 3px 3px;
+      padding: 0.4em;
+      padding-left: 1.5em;
+      font-size: 1.4em;
+      height: 18px;
+      border: 1px solid #CCC;
+      outline: none;
+      
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
+      
+      -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+
+    #trains li:hover {
+      background-color: #fff9bd;
+    }
+
+    .footer {
+      background-color: #EEE;
+      min-width: 940px;
+      padding: 30px 0;
+      text-shadow: 0 1px 0 white;
+      border-top: 1px solid #E5E5E5;
+      -webkit-box-shadow: inset 0 5px 15px rgba(0,0,0,.025);
+      -moz-box-shadow: inset 0 5px 15px rgba(0,0,0,.025);
+    }
+
+    </style>
+    <title></title>
+  </head>
+  <body onload="prettyPrint()">
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">Communico</a>
+          <ul class="nav secondary-nav">
+            <li><a><span class="label warning" id="status">Loading...</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <section id="editor">
+        <div class="row">
+          <div class="span12">
+            <textarea id="pad" rows="8" disabled>Loading. (Or its probably broken and you should come back later.)</textarea>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js"></script>
+    <script src="/channel/bcsocket.js"></script>
+    <script src="/share/share.uncompressed.js"></script>
+    <script src="/share/textarea.js"></script>
+    <script src="/lib/prettify.js"></script>
+    <script src="/share/json.js"></script>
+    <script>
+
+      $(function() {
+        // *** Editor window
+        var elem = document.getElementById('pad');
+
+        var connection = sharejs.open('blag', 'text', function(error, doc) {
+          if (error) {
+            console.log(error);
+          } else {
+            elem.disabled = false;
+            doc.attach_textarea(elem);
+          }
+        });
+
+        // *** Connection status display
+        var status = document.getElementById('status');
+        var register = function(state, klass, text) {
+          connection.on(state, function() {
+            status.className = 'label ' + klass;
+            status.innerHTML = text;
+          });
+        };
+
+        register('ok', 'success', 'Online');
+        register('connecting', 'warning', 'Connecting...');
+        register('disconnected', 'important', 'Offline');
+        register('stopped', 'important', 'Error');
+
+      });
+
+    </script>
+  </body>
+</html>
